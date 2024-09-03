@@ -8,8 +8,9 @@ function Counter() {
     return (
         <div>
             Counter
-            <button onClick={() => handleClick()}>increment</button>
+            <button className='btn btn-accent' onClick={() => handleClick()}>increment</button>
             <p>{count}</p>
+            <p className='text-2xl'>test</p>
         </div>
     )
 }
