@@ -46,10 +46,12 @@ export default function Login() {
                     <Image
                         src="/Whangaehu.svg"
                         alt="Background Image"
-                        layout="fill"
-                        objectFit="cover"
                         className="w-full h-full"
-                    />
+                        fill
+                        sizes="100vw"
+                        style={{
+                            objectFit: "cover"
+                        }} />
                 </div>
 
                 <div className="relative flex items-center justify-between w-full h-full">
@@ -94,7 +96,8 @@ export default function Login() {
                             </Button>
                         </form>
                     ) : (
-                        <InputOTPForm /> // Show OTP form when OTP is requested
+                        <InputOTPForm />
+
                     )}
 
                     <div className="mt-4 text-center text-sm">
