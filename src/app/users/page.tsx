@@ -13,7 +13,7 @@ const Users = async () => {
     return (
         <div >
             <nav className='mb-8'>
-                <NavBar />
+                {/* <NavBar /> */}
             </nav>
             <h1>
                 Users

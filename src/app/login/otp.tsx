@@ -30,6 +30,7 @@ const FormSchema = z.object({
 
 export default function InputOTPForm() {
     const router = useRouter()
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -51,7 +52,7 @@ export default function InputOTPForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6 mx-auto">
                 <FormField
                     control={form.control}
                     name="pin"
