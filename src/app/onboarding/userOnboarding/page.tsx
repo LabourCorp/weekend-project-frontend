@@ -1,5 +1,6 @@
+'use client'
+
 import React from 'react'
-import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,17 +14,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 const userOnboarding = () => {
+    const handleClick = () => {
+
+    }
     return (
-        <div className="flex items-center justify-center min-h-screen ">
-            <Card className="max-w-sm h-80 mx-auto bg-white shadow-md rounded-lg">
-                <CardHeader>
+        <div className="flex items-center justify-center min-h-screen p-4">
+            <Card className="w-full max-w-sm h-[500px] bg-white shadow-md rounded-lg flex flex-col">
+                <CardHeader className="h-1/4">
                     <CardTitle className="text-xl">Let's get to know each other</CardTitle>
                     <CardDescription>
                         Enter your information
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid gap-4">
+                <CardContent className="flex-grow flex flex-col">
+                    <div className="grid gap-4 mb-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="first-name">First name</Label>
@@ -44,10 +48,10 @@ const userOnboarding = () => {
                                 autoComplete='off'
                             />
                         </div>
-                        <Button type="submit" className="w-full">
-                            Let's get started
-                        </Button>
                     </div>
+                    <Button type="submit" className="w-full mt-auto" onClick={() => handleClick()}>
+                        Let's get started
+                    </Button>
                 </CardContent>
             </Card>
         </div>
