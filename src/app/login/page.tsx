@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useForm } from "react-hook-form"
 import { useState } from "react"
-import InputOTPForm from './otp' // Import your OTP form component
+import InputOTPForm from '../../components/ui/otp' // Import your OTP form component
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -33,7 +33,6 @@ export default function Login() {
 
     // Handle form submission
     const onSubmit = (data: { mobile: string }) => {
-        console.log("Mobile Number Submitted:", data.mobile)
         setReqOtp(true) // Show the OTP form when the mobile number is valid
     }
 
@@ -96,7 +95,7 @@ export default function Login() {
                             </Button>
                         </form>
                     ) : (
-                        <InputOTPForm />
+                        <InputOTPForm route="/onboarding" />
 
                     )}
 

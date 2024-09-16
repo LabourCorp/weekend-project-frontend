@@ -22,13 +22,17 @@ import {
 } from "@/components/ui/input-otp"
 import { useRouter } from "next/navigation"
 
-const FormSchema = z.object({
-    pin: z.string().min(6, {
-        message: "Your one-time password must be 6 characters.",
-    }),
-})
+interface Props {
+    route: string
+}
 
-export default function InputOTPForm() {
+export default function InputOTPForm({ route }: Props) {
+
+    const FormSchema = z.object({
+        pin: z.string().min(6, {
+            message: "Your one-time password must be 6 characters.",
+        }),
+    })
     const router = useRouter()
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -47,7 +51,7 @@ export default function InputOTPForm() {
                 </pre>
             ),
         })
-        router.push('/onboarding')
+        router.push(route)
     }
 
     return (
