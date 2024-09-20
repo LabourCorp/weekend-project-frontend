@@ -5,5 +5,4 @@ const contractorjobs = () => {
         <div>contractorjobs</div>
     )
 }
-
 export default contractorjobs

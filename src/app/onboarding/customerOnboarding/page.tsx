@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const userOnboarding = () => {
+const customerOnboarding = () => {
     const handleClick = () => {
 
     }
@@ -39,11 +39,11 @@ const userOnboarding = () => {
                             </div>
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">Address</Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="you@example.com"
+                                placeholder="enter complete address"
                                 required
                                 autoComplete='off'
                             />
@@ -58,5 +58,8 @@ const userOnboarding = () => {
     )
 }
 
-
-export default userOnboarding
+{
+    // enable location permission
+    // fetch.post('/users',fnan,lname,'role'=customer, address{k:v(location(latitude,longitude))}, location(latitude,longitude), )
+}
+export default customerOnboarding

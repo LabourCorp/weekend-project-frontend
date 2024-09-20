@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 const Page = () => {
     const router = useRouter();
     const cards = [
-        { id: 1, label: "I am a User", imgSrc: "/peep-94.svg", content: 'Hey, I want to hire people', route: '/onboarding/userOnboarding' },
+        { id: 1, label: "I am a Customer", imgSrc: "/peep-94.svg", content: 'Hey, I want to hire people', route: '/onboarding/customerOnboarding' },
         { id: 2, label: "I am a Contractor", imgSrc: "/peep-85.svg", content: 'Hey, I have a team of people', route: '/onboarding/contractorOnboarding' },
         { id: 3, label: "I am an Architect", imgSrc: "/peep-17.svg", content: 'Hey, I make blueprints and stuff', route: '/onboarding/archietectOnboarding' },
         { id: 4, label: "I am a Labourer", imgSrc: "/peep-76.svg", content: 'Hey, I want to get hired', route: '/onboarding/labourOnboarding' },
@@ -66,12 +66,6 @@ const Page = () => {
                     Let's go!
                 </Button>
 
-                {/* Display selected card info */}
-                {selectedCard !== null && (
-                    <p className="text-sm text-gray-600">
-                        You have selected: {cards.find(card => card.id === selectedCard)?.label}
-                    </p>
-                )}
             </div>
         </div>
     );

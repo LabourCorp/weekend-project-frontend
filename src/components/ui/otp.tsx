@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useState } from "react"
 
-import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -23,17 +23,17 @@ import {
 import { useRouter } from "next/navigation"
 
 interface Props {
-    route: string
+    onVerify: (pin: string) => Promise<boolean>;
 }
 
-export default function InputOTPForm({ route }: Props) {
+export default function InputOTPForm({ onVerify }: Props) {
+    const router = useRouter()
 
     const FormSchema = z.object({
         pin: z.string().min(6, {
             message: "Your one-time password must be 6 characters.",
         }),
     })
-    const router = useRouter()
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -42,21 +42,25 @@ export default function InputOTPForm({ route }: Props) {
         },
     })
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        })
-        router.push(route)
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+
+    async function handleSubmit({ pin }: z.infer<typeof FormSchema>) {
+        setIsVerifying(true);
+        try {
+            const verified = await onVerify(pin);
+            setIsVerified(verified);
+            if (!verified) {
+                form.setError('pin', { type: 'manual', message: 'Invalid OTP. Please try again.' });
+            }
+        } finally {
+            setIsVerifying(false);
+        }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6 mx-auto">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="w-2/3 space-y-6 mx-auto">
                 <FormField
                     control={form.control}
                     name="pin"
@@ -83,8 +87,8 @@ export default function InputOTPForm({ route }: Props) {
                     )}
                 />
 
-                <Button type="submit" className="w-full">
-                    Submit
+                <Button type="submit" className="w-full" disabled={isVerifying}>
+                    {isVerifying ? 'Verifying...' : 'Submit'}
                 </Button>
             </form>
 

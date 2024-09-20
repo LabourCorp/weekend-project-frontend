@@ -32,5 +32,8 @@ const Users = async () => {
         </div>
     )
 }
+{
+    // post jobs fetch.post('/jobs',)
+}
 
 export default Users
