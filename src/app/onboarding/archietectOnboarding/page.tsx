@@ -53,17 +53,17 @@ const archietectOnboarding = () => {
         const isValid = await new Promise<boolean>((resolve) => {
             setTimeout(() => resolve(pin === "123456"), 1000)
         })
-        if (isValid) {
-            setStep(3)
-        }
+        // if (isValid) {
+        //     setStep(3)
+        // }
         return isValid
     }
 
-    const onSubmit2 = (data: z.infer<typeof FormSchema2>) => {
-        console.log("Step 3 data:", data)
-        // Here you would typically send all collected data to your backend
-        router.push('/archietect/jobs')
-    }
+    // const onSubmit2 = (data: z.infer<typeof FormSchema2>) => {
+    //     console.log("Step 3 data:", data)
+    //     // Here you would typically send all collected data to your backend
+    //     router.push('/archietect/jobs')
+    // }
 
     return (
         <div className="flex items-center justify-center min-h-screen p-4">
@@ -73,7 +73,7 @@ const archietectOnboarding = () => {
                     <CardDescription>
                         {step === 1 && "Enter your basic information"}
                         {step === 2 && "Verify your identity"}
-                        {step === 3 && "Complete your profile"}
+                        {/* {step === 3 && "Complete your profile"} */}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow flex flex-col">
@@ -111,7 +111,7 @@ const archietectOnboarding = () => {
                     {step === 2 && (
                         <InputOTPForm onVerify={handleVerify} redirectPath="/archietect/jobs" />
                     )}
-                    {step === 3 && (
+                    {/* {step === 3 && (
                         <form onSubmit={form2.handleSubmit(onSubmit2)} className="flex-grow flex flex-col">
                             <div className="grid gap-4 mb-6">
                                 <div className="grid gap-2">
@@ -133,7 +133,7 @@ const archietectOnboarding = () => {
                                 Complete Registration
                             </Button>
                         </form>
-                    )}
+                    )} */}
                 </CardContent>
             </Card>
         </div>
