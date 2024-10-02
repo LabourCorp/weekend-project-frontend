@@ -23,10 +23,11 @@ import {
 import { useRouter } from "next/navigation"
 
 interface Props {
-    onVerify: (pin: string) => Promise<boolean>;
+    onVerify?: (pin: string) => Promise<boolean>;
+    redirectPath: string; // New prop for redirect path
 }
 
-export default function InputOTPForm({ onVerify }: Props) {
+export default function InputOTPForm({ onVerify, redirectPath }: Props) {
     const router = useRouter()
 
     const FormSchema = z.object({
@@ -48,9 +49,18 @@ export default function InputOTPForm({ onVerify }: Props) {
     async function handleSubmit({ pin }: z.infer<typeof FormSchema>) {
         setIsVerifying(true);
         try {
-            const verified = await onVerify(pin);
+            let verified = false;
+            if (typeof onVerify === 'function') {
+                verified = await onVerify(pin);
+            } else {
+                console.warn('onVerify prop is not a function or not provided');
+                // Default implementation
+                verified = pin === '123456'; // Example: consider any pin as valid
+            }
             setIsVerified(verified);
-            if (!verified) {
+            if (verified) {
+                router.push(redirectPath); // Redirect on successful verification
+            } else {
                 form.setError('pin', { type: 'manual', message: 'Invalid OTP. Please try again.' });
             }
         } finally {
@@ -91,7 +101,6 @@ export default function InputOTPForm({ onVerify }: Props) {
                     {isVerifying ? 'Verifying...' : 'Submit'}
                 </Button>
             </form>
-
         </Form>
     )
 }

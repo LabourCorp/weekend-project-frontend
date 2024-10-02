@@ -95,8 +95,7 @@ export default function Login() {
                             </Button>
                         </form>
                     ) : (
-                        <InputOTPForm route="/onboarding" />
-
+                        <InputOTPForm redirectPath="/onboarding" />
                     )}
 
                     <div className="mt-4 text-center text-sm">
