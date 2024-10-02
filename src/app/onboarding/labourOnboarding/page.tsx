@@ -86,7 +86,7 @@ const labourOnboarding = () => {
                     </form>
                     {reqOtp && (
                         <div className="mt-4">
-                            <InputOTPForm route="/labour/jobs" />
+                            <InputOTPForm redirectPath="/labour/jobs" />
                         </div>
                     )}
                 </CardContent>
