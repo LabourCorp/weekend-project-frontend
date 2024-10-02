@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Home, ShoppingCart, Package, Settings, Users2, LineChart, Menu } from "lucide-react"
+import { Home, ShoppingCart, Package, Settings, Users2, LineChart, Menu, UserRound } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -51,8 +51,8 @@ export default function NavBar() {
                 <Link href="#" className="mr-auto flex flex-col items-center">
                     <span className="text-2xl font-bold">labour.</span>
                 </Link>
-                <Link href="#" className="flex flex-col items-center p-2">
-                    <ShoppingCart className="h-6 w-6" />
+                <Link href="/users/profile" className="flex flex-col items-center p-2">
+                    <UserRound className="h-6 w-6 rounded-2xl" />
                 </Link>
             </div>
 
@@ -84,8 +84,8 @@ export default function NavBar() {
                         <Link href="#" className="flex items-center gap-2">
                             <Settings className="h-5 w-5" /> Settings
                         </Link>
-                        <Link href="#" className="flex items-center gap-2">
-                            <ShoppingCart className="h-5 w-5" /> Cart
+                        <Link href="/users/profile" className="flex items-center gap-2">
+                            <UserRound className="h-5 w-5" /> Profile
                         </Link>
                     </div>
                 </nav>
