@@ -11,9 +11,9 @@ import NavBar from "@/components/ui/NavBar"
 export default function ProfilePage() {
     const fname = 'Piyush';
     const lname = 'Gaur';
-    const documentsVal = 2;
-    const locationVal = 1
-    const photoVal = 1
+    const documentsVal = 0;
+    const locationVal = 0
+    const photoVal = 0
     const phoneNumber = '+91 9876543210'
 
     return (

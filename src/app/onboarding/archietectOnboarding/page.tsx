@@ -109,7 +109,7 @@ const archietectOnboarding = () => {
                         </form>
                     )}
                     {step === 2 && (
-                        <InputOTPForm onVerify={handleVerify} redirectPath="/archietect/jobs" />
+                        <InputOTPForm onVerify={handleVerify} redirectPath="/archietect" />
                     )}
                     {/* {step === 3 && (
                         <form onSubmit={form2.handleSubmit(onSubmit2)} className="flex-grow flex flex-col">
