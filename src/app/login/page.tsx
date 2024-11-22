@@ -5,13 +5,25 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useForm } from "react-hook-form"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import InputOTPForm from '../../components/ui/otp' // Import your OTP form component
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { signIn, useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 export default function Login() {
+    const router = useRouter()
+    const { data: session, status } = useSession()
     const [reqOtp, setReqOtp] = useState(false)
+    const [phone, setPhone] = useState("")
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (status === 'authenticated') {
+            router.push('/users/profile')
+        }
+    }, [status, router])
 
     // Zod schema for validating mobile number
     const FormSchema = z.object({
@@ -31,9 +43,54 @@ export default function Login() {
         },
     })
 
-    // Handle form submission
-    const onSubmit = (data: { mobile: string }) => {
-        setReqOtp(true) // Show the OTP form when the mobile number is valid
+    // Handle mobile submission
+    const onSubmit = async (data: { mobile: string }) => {
+        try {
+            // Mock OTP sending
+            console.log('Simulating OTP send to:', data.mobile)
+            // For development, we'll just set the states directly
+            setPhone(data.mobile)
+            setReqOtp(true)
+
+            // In development, you can use a fixed OTP like "123456" for testing
+            console.log('Development mode: Use "123456" as OTP')
+        } catch (error) {
+            console.error('Error:', error)
+        }
+    }
+
+    // Handle OTP verification
+    const handleOTPVerify = async (otp: string) => {
+        try {
+            // For development, accept "123456" as valid OTP
+            const isValid = otp === "123456"
+
+            if (isValid) {
+                // Sign in using NextAuth credentials provider
+                const result = await signIn('credentials', {
+                    phone: phone,
+                    otp: otp,
+                    redirect: false, // Prevent automatic redirect
+                })
+
+                if (result?.error) {
+                    console.error('Authentication failed:', result.error)
+                    return false
+                }
+
+                // If authentication is successful, manually redirect
+                console.log('OTP verified successfully')
+                router.push('/onboarding')
+                router.refresh() // Force a refresh to update the session
+                return true
+            } else {
+                console.error('Invalid OTP')
+                return false
+            }
+        } catch (error) {
+            console.error('Error during OTP verification:', error)
+            return false
+        }
     }
 
     return (
@@ -72,35 +129,44 @@ export default function Login() {
                         </p>
                     </div>
 
-                    {!reqOtp ? (  // Conditionally render based on reqOtp state
+                    {!reqOtp ? (
                         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="phone">Phone</Label>
                                 <Input
                                     id="phone"
                                     type="tel"
-                                    placeholder="1234-567-890"
-                                    {...register("mobile")} // React Hook Form registration
+                                    placeholder="1234567890"
+                                    {...register("mobile")}
                                 />
-                                {/* Display validation error */}
-                                {errors.mobile && <p className="text-red-500">{errors.mobile.message}</p>}
+                                {errors.mobile && (
+                                    <p className="text-red-500">{errors.mobile.message}</p>
+                                )}
                             </div>
 
                             <Button type="submit" className="w-full">
                                 Request OTP
                             </Button>
 
-                            <Button variant="outline" className="w-full">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => signIn('google', { callbackUrl: '/users/profile' })}
+                            >
                                 Login with Google
                             </Button>
                         </form>
                     ) : (
-                        <InputOTPForm redirectPath="/onboarding" />
+                        <InputOTPForm
+                            onVerify={handleOTPVerify}
+                            redirectPath="/onboarding"
+                        />
                     )}
 
                     <div className="mt-4 text-center text-sm">
                         Don&apos;t have an account?{" "}
-                        <Link href="#" className="underline">
+                        <Link href="/register" className="underline">
                             Sign up
                         </Link>
                     </div>
