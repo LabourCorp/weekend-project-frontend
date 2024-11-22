@@ -1,5 +1,8 @@
-import React from 'react'
-import NavBar from '@/components/ui/NavBar'
+'use client'
+import React, { useEffect, useState } from 'react'
+import Loading from '../onboarding/loading'
+import { useSession } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 interface Users {
     id: number
     name: string
@@ -7,9 +10,32 @@ interface Users {
     email: string
 }
 
-const Users = async () => {
-    const res = await fetch('https://jsonplaceholder.typicode.com/users')
-    const data: Users[] = await res.json()
+const Users = () => {
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            redirect('/login')
+        },
+    })
+
+    const [data, setData] = useState<Users[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch('https://jsonplaceholder.typicode.com/users')
+            const users = await res.json()
+            setData(users)
+            setLoading(false)
+        }
+
+        fetchData()
+    }, [])
+
+    // Show loading state while checking authentication or fetching data
+    if (status === "loading" || loading) {
+        return <Loading />
+    }
     return (
         <div >
             <nav className='mb-8'>
@@ -31,9 +57,6 @@ const Users = async () => {
             </ul>
         </div>
     )
-}
-{
-    // post jobs fetch.post('/jobs',)
 }
 
 export default Users

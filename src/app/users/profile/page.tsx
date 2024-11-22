@@ -1,26 +1,120 @@
 "use client"
 
+import { useSession } from "next-auth/react"
+import { redirect } from "next/navigation"
 import { PolarAngleAxis, RadialBar, RadialBarChart } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer } from "@/components/ui/chart"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import NavBar from "@/components/ui/NavBar"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import Loading from "@/app/onboarding/loading"
 
+interface UserLocation {
+    latitude: number;
+    longitude: number;
+}
+// New UploadPhoto component
+function UploadPhoto({ onUpload, onSubmit }: { onUpload: (file: File) => void; onSubmit: (image: string) => void }) {
+    const [image, setImage] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null); // Store the file for submission
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (typeof reader.result === 'string') {
+                    setImage(reader.result);
+                }
+                setFile(selectedFile); // Store the file for submission
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    };
+
+    const handleSubmit = () => {
+        if (file && image) {
+            onUpload(file); // Call the onUpload prop with the file
+            onSubmit(image); // Call the onSubmit prop with the image preview
+        }
+    };
+
+    return (
+        <div>
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="mt-2 bg-gray-200 text-gray-700 px-4 py-2 rounded" // Updated styling for consistency
+            />
+            {image && <img src={image} alt="Preview" className="mt-2 h-24 w-24" />}
+            <Button
+                onClick={handleSubmit}// Updated styling for consistency
+            >
+                Submit
+            </Button>
+        </div>
+    );
+}
 
 export default function ProfilePage() {
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            redirect('/login')
+        },
+    })
+
+    // Show loading state while checking authentication
+    if (status === "loading") {
+        return <Loading />
+    }
+
     const fname = 'Piyush';
     const lname = 'Gaur';
-    const documentsVal = 0;
-    const locationVal = 0
-    const photoVal = 0
-    const phoneNumber = '+91 9876543210'
+    const phoneNumber = '+91 9876543210';
+    const [avatarImage, setAvatarImage] = useState("/avatar.png"); // State for avatar image
+    const [userLocation, setUserLocation] = useState<UserLocation | null>(null); // State for user location
+    const [documentsVal, setDocumentsVal] = useState<number>(0); // State for documents submitted
+    const [photoVal, setPhotoVal] = useState<number>(0); // State for photo uploaded
+
+    const handlePhotoUpload = (file: File) => {
+        // Handle the uploaded file (e.g., send it to the server)
+        console.log("Uploaded file:", file);
+        setPhotoVal(100); // Update photoVal to indicate photo is uploaded
+    };
+
+    const handleImageSubmit = (image: string) => {
+        setAvatarImage(image); // Update the avatar image with the uploaded image
+    };
+
+    const handleDocumentSubmit = () => {
+        setDocumentsVal(2); // Update documentsVal to indicate documents are submitted
+    };
+
+    const handleLocationPermission = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position: GeolocationPosition) => {
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation({ latitude, longitude }); // Update state with location
+                    console.log("Current location:", { latitude, longitude });
+                },
+                (error: GeolocationPositionError) => {
+                    console.error("Error getting location:", error);
+                }
+            );
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+        }
+    };
 
     return (
         <>
             <NavBar />
             <div className="container mx-auto p-6 mt-20">
-
                 <div className="grid gap-6 md:grid-cols-2">
                     <Card >
                         <CardHeader>
@@ -28,7 +122,7 @@ export default function ProfilePage() {
                         </CardHeader>
                         <CardContent className="flex items-center space-x-4">
                             <Avatar className="h-24 w-24">
-                                <AvatarImage src="/avatar.png" alt="User" />
+                                <AvatarImage src={avatarImage} alt="User" />
                                 <AvatarFallback>{fname.charAt(0).toUpperCase() + lname.charAt(0).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div>
@@ -70,17 +164,17 @@ export default function ProfilePage() {
                                     data={[
                                         {
                                             activity: "location",
-                                            value: locationVal === 0 ? 78 : 100,
+                                            value: userLocation ? 100 : 30, // 100 if location is available, else 0
                                             fill: "var(--color-location)",
                                         },
                                         {
                                             activity: "photo",
-                                            value: photoVal === 0 ? 83 : 100,
+                                            value: photoVal ? 100 : 20, // Use photoVal for the photo progress
                                             fill: "var(--color-photo)",
                                         },
                                         {
                                             activity: "documents",
-                                            value: documentsVal / 2 * 100,
+                                            value: (documentsVal / 2) * 100, // Assuming 2 is the max for documents
                                             fill: "var(--color-documents)",
                                         },
                                     ]}
@@ -104,21 +198,21 @@ export default function ProfilePage() {
                                         <span>Documents</span>
                                         <span>{documentsVal === 2 ? 'Verified' : (documentsVal === 0 ? 'Documents not provided' : 'Submitted')}</span>
                                     </div>
-                                    <Progress value={documentsVal / 2 * 100} />
+                                    <Progress value={(documentsVal / 2) * 100} />
                                 </div>
                                 <div>
                                     <div className="flex justify-between mb-1">
                                         <span>Photo</span>
                                         <span>{photoVal === 0 ? 'Upload Photo' : 'Verified'}</span>
                                     </div>
-                                    <Progress value={photoVal === 0 ? 83 : 100} />
+                                    <Progress value={photoVal ? 100 : 20} />
                                 </div>
                                 <div>
                                     <div className="flex justify-between mb-1">
                                         <span>Location</span>
-                                        <span>{locationVal === 0 ? 'Permission not given' : 'Verified'}</span>
+                                        <span>{userLocation ? 'Verified' : 'Permission not given'}</span>
                                     </div>
-                                    <Progress value={locationVal === 0 ? 78 : 100} />
+                                    <Progress value={userLocation ? 100 : 30} />
                                 </div>
                             </div>
                         </CardContent>
@@ -147,6 +241,33 @@ export default function ProfilePage() {
                                     <dd className="mt-1 text-sm text-gray-900">New York, NY</dd>
                                 </div>
                             </dl>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Upload Photo</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <UploadPhoto onUpload={handlePhotoUpload} onSubmit={handleImageSubmit} />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Location Permission</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Button
+                                onClick={handleLocationPermission}
+                            >
+                                Get Current Location
+                            </Button>
+                            {userLocation && (
+                                <p className="mt-2">
+                                    Location: {userLocation.latitude}, {userLocation.longitude}
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
                 </div>
